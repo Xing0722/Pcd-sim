@@ -1,0 +1,12 @@
+name: pcd-sim
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - scipy
+  - matplotlib
+  - trimesh
+  - pip
+  - pip:
+    - open3d
