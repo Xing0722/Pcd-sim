@@ -7,6 +7,9 @@ dependencies:
   - scipy
   - matplotlib
   - trimesh
+  - networkx
+  - rtree
+  - requests
   - pip
   - pip:
     - open3d
