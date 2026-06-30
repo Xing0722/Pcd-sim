@@ -1,8 +1,9 @@
+import logging
 import os
 import tempfile
 from datetime import datetime
 from typing import Any
-from logger.py import RoboLogger
+
 
 # 模块加载时执行一次，整个进程运行期间不变
 _RUN_TIMESTAMP = datetime.now().strftime('%Y%m%d_%H%M%S_%f')[:-3]
@@ -14,7 +15,7 @@ class RoboLogger:
         self.name = name
         self.log_level = log_level
         self.log_dir = log_dir
-        self._logger = RpboLogger
+        self._logger = self._setup_logger()
 
     @staticmethod
     def get_run_timestamp() -> str:

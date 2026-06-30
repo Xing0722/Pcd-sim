@@ -1,17 +1,3 @@
-"""
-poses.py
-
-sample camera poses around a mesh for synthetic scanning.
-生成相机位姿
-
-Pipeline:
-    stable pose (trimesh) → center mesh to world origin → 
-    bounding cylinder → camera poses (theta x phi grid)
-
-No coordinate system alignment to a turntable origin is performed here,
-since this simulation does not use RoboDK or physical hardware.
-"""
-
 import numpy as np
 import trimesh
 from logger import RoboLogger
@@ -21,12 +7,6 @@ class PoseGenerator:
     def __init__(self, mesh,thetas, phis):
         """
         Parameters
-        ----------
-        mesh   : input mesh
-        thetas : horizontal angles in radians
-                 e.g. np.linspace(0, 2*pi, 8, endpoint=False)
-        phis   : zenith angles in radians
-                 0 = directly above, pi/2 = equator level
         """
         self.mesh = mesh
         self.thetas = thetas
@@ -55,10 +35,6 @@ class PoseGenerator:
     def _compute_stable_pose(self):
         """
         Compute the most stable resting pose using trimesh's built-in
-        stable pose estimation:
-            convex hull → face enumeration →
-            support polygon test → probability weighting
-        Returns the 4x4 transform for the highest-probability stable pose.
         """
         transforms, probs = trimesh.poses.compute_stable_poses(self.mesh)
         best_idx = np.argmax(probs)
@@ -103,10 +79,7 @@ class PoseGenerator:
 
     def _compute_bounding_cylinder(self, bbox: dict) -> dict:
         """
-        Minimum enclosing cylinder aligned to Z axis, derived from bounding box.
-        Radius: circumradius of the XY bounding rectangle
-                = sqrt((x_range/2)^2 + (y_range/2)^2)
-        Height: z_max - z_min
+        Compute the bounding cylinder that encloses the mesh.
         """
         x_range = bbox["x_max"] - bbox["x_min"]
         y_range = bbox["y_max"] - bbox["y_min"]
@@ -148,12 +121,7 @@ class PoseGenerator:
 
     def _generate(self, centroid: np.ndarray, cylinder: dict) -> list[np.ndarray]:
         """
-        Sample camera positions on a sphere around the centered mesh
-        for every (theta, phi) combination.
-        Distance is set internally to 2x the bounding cylinder radius —
-        large enough to guarantee the camera is outside the mesh.
-        Actual scan distance is not a parameter here; it is determined
-        by the ray length in scanner.py.
+        Generate camera poses on a spherical grid around the mesh.
         """
         r     = cylinder["radius"] * 2.0
         poses = []

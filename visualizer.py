@@ -1,19 +1,3 @@
-"""
-visualizer.py
-
-Visualize intermediate results of the virtual scanning pipeline.
-
-Two output modes:
-    show() → open3d interactive window (local debugging)
-    save() → matplotlib PNG (for README)
-
-Visualization nodes:
-    1. stabilized mesh + camera positions
-    2. single frame scan result
-    3. all frames merged (before registration)
-    4. merged scan aligned to original mesh (after registration)
-"""
-
 import numpy as np
 import trimesh
 import open3d as o3d

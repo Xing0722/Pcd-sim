@@ -1,0 +1,48 @@
+2026-06-30 23:52:15 - Simulation - INFO - Logger 'Simulation' initialised — log file: logs/ScanSimulation_20260630_235208_311.log
+2026-06-30 23:52:15 - Simulation - INFO - 
+[main] loading mesh: data/bunny.stl
+2026-06-30 23:52:16 - Simulation - INFO - [main] vertices=34834  faces=69451
+2026-06-30 23:52:16 - Simulation - INFO - 
+[main] step 1 — pose generation
+2026-06-30 23:52:16 - Simulation - INFO - [poses] stable pose selected, probability: 0.254
+2026-06-30 23:52:16 - Simulation - INFO - [poses] bounding box: x=0.1760  y=0.1695  z=0.1100
+2026-06-30 23:52:16 - Simulation - INFO - [poses] bounding cylinder: radius=0.1222  height=0.1100
+2026-06-30 23:52:16 - Simulation - INFO - [poses] generated 16 camera poses (8 theta x 2 phi)
+2026-06-30 23:52:16 - Simulation - INFO - 
+[main] step 2 — virtual scanning
+2026-06-30 23:52:16 - Simulation - INFO - [scanner] generated 3072 ray lines (64x48, fov=62.0x48.0deg, depth_max=1.0)
+2026-06-30 23:52:20 - Simulation - INFO - [scanner] pose 01/16  hits=757  after_filter=757
+2026-06-30 23:52:25 - Simulation - INFO - [scanner] pose 02/16  hits=756  after_filter=756
+2026-06-30 23:52:30 - Simulation - INFO - [scanner] pose 03/16  hits=740  after_filter=740
+2026-06-30 23:52:35 - Simulation - INFO - [scanner] pose 04/16  hits=734  after_filter=734
+2026-06-30 23:52:40 - Simulation - INFO - [scanner] pose 05/16  hits=744  after_filter=744
+2026-06-30 23:52:45 - Simulation - INFO - [scanner] pose 06/16  hits=780  after_filter=780
+2026-06-30 23:52:49 - Simulation - INFO - [scanner] pose 07/16  hits=782  after_filter=782
+2026-06-30 23:52:54 - Simulation - INFO - [scanner] pose 08/16  hits=736  after_filter=736
+2026-06-30 23:53:04 - Simulation - INFO - [scanner] pose 09/16  hits=701  after_filter=701
+2026-06-30 23:53:34 - Simulation - INFO - [scanner] pose 10/16  hits=706  after_filter=706
+2026-06-30 23:53:42 - Simulation - INFO - [scanner] pose 11/16  hits=678  after_filter=678
+2026-06-30 23:54:09 - Simulation - INFO - [scanner] pose 12/16  hits=699  after_filter=699
+2026-06-30 23:54:17 - Simulation - INFO - [scanner] pose 13/16  hits=734  after_filter=734
+2026-06-30 23:54:39 - Simulation - INFO - [scanner] pose 14/16  hits=781  after_filter=781
+2026-06-30 23:54:49 - Simulation - INFO - [scanner] pose 15/16  hits=788  after_filter=788
+2026-06-30 23:55:08 - Simulation - INFO - [scanner] pose 16/16  hits=738  after_filter=738
+2026-06-30 23:55:08 - Simulation - INFO - 
+[main] step 3 — registration
+2026-06-30 23:55:08 - Simulation - INFO - [registration] merged 16 frames → 11854 points
+2026-06-30 23:55:09 - Simulation - INFO - [registration] FGR fitness=0.9701  inlier_rmse=0.00104
+2026-06-30 23:55:09 - Simulation - INFO - [registration] ICP  fitness=1.0000  inlier_rmse=0.00057
+2026-06-30 23:55:09 - Simulation - INFO - 
+[main] alignment matrix:
+[[ 9.99999995e-01 -9.23139464e-05  2.73602019e-05  4.70199525e-06]
+ [ 9.23096445e-05  9.99999983e-01  1.57194487e-04 -5.03207708e-06]
+ [-2.73747127e-05 -1.57191960e-04  9.99999987e-01  1.81799089e-05]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  1.00000000e+00]]
+2026-06-30 23:55:09 - Simulation - INFO - 
+[main] step 4 — visualization
+2026-06-30 23:55:18 - Simulation - INFO - [visualizer] saved → results/node1_cameras.png
+2026-06-30 23:55:26 - Simulation - INFO - [visualizer] saved → results/node2_single_scan.png
+2026-06-30 23:55:32 - Simulation - INFO - [visualizer] saved → results/node3_merged.png
+2026-06-30 23:55:39 - Simulation - INFO - [visualizer] saved → results/node4_aligned.png
+2026-06-30 23:55:39 - Simulation - INFO - 
+[main] done. results saved to 'results/'

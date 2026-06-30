@@ -1,13 +1,4 @@
-"""
-registration.py
 
-Register the merged scan point cloud against the original mesh.
-点云配准：将合并的扫描点云与原始网格进行配准。
-Pipeline:
-    merge all scan frames → preprocess (downsample + normals + FPFH) →
-    FGR coarse registration → ICP fine registration →
-    output 4x4 alignment matrix + aligned point cloud
-"""
 
 import numpy as np
 import trimesh
@@ -20,10 +11,6 @@ class Registration:
                  voxel_size: float = 0.005):
         """
         Parameters
-        ----------
-        point_clouds : list of point clouds from Scanner.run()
-        mesh         : stabilized mesh from PoseGenerator (used as target)
-        voxel_size   : voxel size for downsampling, relative to mesh scale
         """
         self.point_clouds = point_clouds
         self.mesh         = mesh
