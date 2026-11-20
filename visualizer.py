@@ -90,14 +90,14 @@ class Visualizer:
 
         if show:
             self._show_o3d([mesh_pcd, scan_pcd],
-                           title="Node 3: All Frames Merged (before registration)")
+                           title="Node 3: Merged Scans (before registration)")
         if save:
             self._save_mpl(
                 point_sets=[
                     (np.asarray(mesh_pcd.points), COLORS["mesh"],        "mesh", 0.5),
                     (np.asarray(scan_pcd.points), COLORS["scan_merged"], "scan",    3),
                 ],
-                title="Node 3: All Frames Merged (before registration)",
+                title="Node 3: Merged Scans (before registration)",
                 filename="node3_merged.png")
 
     # -----------------------------------------------------------------------
@@ -180,35 +180,3 @@ class Visualizer:
         plt.savefig(out_path, dpi=150)
         plt.close()
         self.logger.info(f"[visualizer] saved → {out_path}")
-
-
-if __name__ == "__main__":
-    import sys, os
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from poses import PoseGenerator
-    from scanner import Scanner
-    from registration import Registration
-
-    mesh_path = sys.argv[1] if len(sys.argv) > 1 else "data/bunny.obj"
-    if not os.path.exists(mesh_path):
-        self.logger.error(f"mesh not found: {mesh_path}")
-        sys.exit(1)
-
-    mesh   = trimesh.load(mesh_path, force="mesh")
-    thetas = np.linspace(0, 2 * np.pi, 4, endpoint=False)
-    phis   = np.array([np.pi / 3])
-
-    gen   = PoseGenerator(mesh, thetas, phis)
-    poses = gen.run()
-
-    scanner = Scanner(gen.stabilized_mesh)
-    pcds    = scanner.run(poses)
-
-    reg = Registration(pcds, gen.stabilized_mesh)
-    reg.run()
-
-    vis = Visualizer(out_dir="results")
-    vis.cameras(gen.stabilized_mesh, poses,     show=False, save=True)
-    vis.single_scan(gen.stabilized_mesh, pcds[0], poses[0], show=False, save=True)
-    vis.merged_scans(gen.stabilized_mesh, pcds,              show=False, save=True)
-    vis.aligned(gen.stabilized_mesh, reg.aligned_pcd,        show=False, save=True)

@@ -8,10 +8,18 @@ from logger import RoboLogger
 class Registration:
     def __init__(self, point_clouds: list[o3d.geometry.PointCloud],
                  mesh: trimesh.Trimesh,
-                 voxel_size: float = 0.005):
+                 voxel_size: float | None = None):
         """
         Parameters
+        ----------
+        point_clouds : scan frames (world coordinates)
+        mesh         : model to register against
+        voxel_size   : downsampling size in mesh units. If None it is set to
+                       1/50 of the object's bounding-box diagonal, so the
+                       pipeline does not depend on the mesh units.
         """
+        if voxel_size is None:
+            voxel_size = float(np.linalg.norm(mesh.extents)) / 50.0
         self.point_clouds = point_clouds
         self.mesh         = mesh
         self.voxel_size   = voxel_size
@@ -108,29 +116,3 @@ class Registration:
         self.logger.info(f"[registration] ICP  fitness={result.fitness:.4f}  "
                           f"inlier_rmse={result.inlier_rmse:.5f}")
         return result.transformation
-
-
-if __name__ == "__main__":
-    import sys, os
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from poses import PoseGenerator
-    from scanner import Scanner, ScannerConfig
-
-    mesh_path = sys.argv[1] if len(sys.argv) > 1 else "data/bunny.obj"
-    if not os.path.exists(mesh_path):
-        self.logger.error(f"mesh not found: {mesh_path}")
-        sys.exit(1)
-
-    mesh   = trimesh.load(mesh_path, force="mesh")
-    thetas = np.linspace(0, 2 * np.pi, 4, endpoint=False)
-    phis   = np.array([np.pi / 3])
-
-    gen     = PoseGenerator(mesh, thetas, phis)
-    poses   = gen.run()
-
-    scanner = Scanner(gen.stabilized_mesh)
-    pcds    = scanner.run(poses)
-
-    reg     = Registration(pcds, gen.stabilized_mesh)
-    T       = reg.run()
-    self.logger.info(f"\nFinal alignment matrix:\n{T}")

@@ -4,18 +4,33 @@ import open3d as o3d
 from logger import RoboLogger
 
 class Scanner:
-    def __init__(self, mesh: trimesh.Trimesh):
+    def __init__(self, mesh: trimesh.Trimesh, depth_range: tuple | None = None):
         """
         Parameters
+        ----------
+        mesh        : mesh to scan (already stabilised and centred)
+        depth_range : (near, far) valid depth in mesh units. If None it is
+                      derived from the object size, so meshes in metres or
+                      millimetres both work.
         """
         self.mesh = mesh
         self.logger = RoboLogger()
         #camera parameters, these can be adjusted to simulate different scanners
         self.fov_h      = 62.0        # horizontal FOV in degrees
         self.fov_v      = 48.0        # vertical FOV in degrees
-        self.depth      = (0.01, 1.0) # valid depth distance range in meters
-                                      
+
+        if depth_range is None:
+            # cameras sit at 2x the bounding-cylinder radius (see poses.py),
+            # so a far plane at 6x the half-diagonal always reaches the object
+            half_diag   = 0.5 * float(np.linalg.norm(mesh.extents))
+            depth_range = (0.05 * half_diag, 6.0 * half_diag)
+        self.depth      = depth_range  # valid depth range, in mesh units
+
         self.resolution = (64, 48)    # downsampled from 4096x3000
+
+        if not trimesh.ray.has_embree:
+            self.logger.warning("[scanner] embreex not installed, falling back to the "
+                                "slow pure-Python ray tracer (pip install embreex)")
 
         self.point_clouds = []
 
@@ -93,12 +108,16 @@ class Scanner:
 
         origins = np.tile(cam_origin, (len(dirs_world), 1))
 
-        locations, _, _ = self.mesh.ray.intersects_location(
-            ray_origins=origins,
-            ray_directions=dirs_world,
-            multiple_hits=False)
+        # cast in chunks to keep peak memory low
+        chunks = []
+        for start in range(0, len(origins), 1024):
+            loc, _, _ = self.mesh.ray.intersects_location(
+                ray_origins=origins[start:start + 1024],
+                ray_directions=dirs_world[start:start + 1024],
+                multiple_hits=False)
+            chunks.append(loc)
 
-        return locations
+        return np.vstack(chunks) if chunks else np.empty((0, 3))
 
     def _filter_points(self, points: np.ndarray,
                        pose: np.ndarray) -> np.ndarray:
@@ -127,27 +146,3 @@ class Scanner:
         angle_mask = angles_deg <= fov_half
 
         return points[depth_mask & angle_mask]
-
-# single entry point for testing the scanner module
-if __name__ == "__main__":
-    import sys, os
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from poses import PoseGenerator
-
-    mesh_path = sys.argv[1] if len(sys.argv) > 1 else "data/bunny.obj"
-    if not os.path.exists(mesh_path):
-        self.logger.error(f"mesh not found: {mesh_path}")
-        sys.exit(1)
-
-    mesh   = trimesh.load(mesh_path, force="mesh")
-    thetas = np.linspace(0, 2 * np.pi, 4, endpoint=False)
-    phis   = np.array([np.pi / 3])
-
-    gen     = PoseGenerator(mesh, thetas, phis)
-    poses   = gen.run()
-
-    scanner = Scanner(gen.stabilized_mesh)
-    pcds    = scanner.start_scanning(poses)
-
-    total = sum(len(p.points) for p in pcds)
-    self.logger.info(f"\nTotal points: {total}")

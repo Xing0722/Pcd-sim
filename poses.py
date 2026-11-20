@@ -138,19 +138,3 @@ class PoseGenerator:
         self.logger.info(f"[poses] generated {len(poses)} camera poses "
               f"({len(self.thetas)} theta x {len(self.phis)} phi)")
         return poses
-
-
-if __name__ == "__main__":
-    import sys, os
-    mesh_path = sys.argv[1] if len(sys.argv) > 1 else "data/bunny.obj"
-    if not os.path.exists(mesh_path):
-        self.logger.error(f"mesh not found: {mesh_path}")
-        sys.exit(1)
-
-    mesh   = trimesh.load(mesh_path, force="mesh")
-    thetas = np.linspace(0, 2 * np.pi, 8, endpoint=False)
-    phis   = np.array([np.pi / 4, np.pi / 3])
-
-    gen   = PoseGenerator(mesh, thetas, phis)
-    poses = gen.run()
-    self.logger.info(f"First pose:\n{poses[0]}")

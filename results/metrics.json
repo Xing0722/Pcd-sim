@@ -1,0 +1,13 @@
+{
+  "mesh": "data/bunny.obj",
+  "num_poses": 16,
+  "num_points_merged": 11854,
+  "perturbed": true,
+  "perturb_deg": 30.0,
+  "rotation_error_deg": 0.011401260173032652,
+  "translation_error": 1.9838914956328802e-05,
+  "translation_error_pct_of_diag": 0.007402992449687061,
+  "mean_dist_to_mesh": 0.0005267256456888028,
+  "rms_dist_to_mesh": 0.0005724430691552769,
+  "bbox_diagonal": 0.26798507618587986
+}
